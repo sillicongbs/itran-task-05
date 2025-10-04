@@ -1,0 +1,89 @@
+﻿@using UserAuthManage.Domains
+@model IEnumerable<UserAuthManage.Controllers.Admin.UsersController.Row>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+@if (TempData["Success"] is string ok)
+{
+    <div class="alert alert-success">@ok</div>
+}
+@if (TempData["Danger"] is string er)
+{
+    <div class="alert alert-danger">@er</div>
+}
+
+<!-- Toolbar (static; enable/disable with selection state) -->
+<div class="d-flex gap-2 align-items-center mb-2">
+    <!-- Toolbar -->
+    <button id="btn-block" formaction="/Admin/Users/Block" form="bulkForm" class="btn btn-outline-danger" disabled tabindex="0"
+            data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Block selected users">
+        Block
+    </button>
+    <button id="btn-unblock" formaction="/Admin/Users/Unblock" form="bulkForm" class="btn btn-outline-secondary" tabindex="0"
+            data-bs-toggle="tooltip" data-bs-placement="bottom" disabled data-bs-title="Unblock selected">
+        <i class="bi bi-unlock"></i>
+    </button>
+    <button id="btn-delete" formaction="/Admin/Users/Delete" form="bulkForm" class="btn btn-outline-secondary" disabled tabindex="0"
+          data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete selected"><i class="bi bi-trash"></i></button>
+    
+    @* <button formaction="/Admin/Users/DeleteUnverified" form="bulkForm" class="btn btn-outline-secondary" title="Delete all unverified"><i class="bi bi-person-x"></i></button> *@
+    <!-- Not disabled: can put tooltip directly on the button if you want -->
+    <button formaction="/Admin/Users/DeleteUnverified" form="bulkForm"
+            class="btn btn-outline-secondary"
+            data-bs-toggle="tooltip" data-bs-placement="bottom"
+            data-bs-title="Delete all unverified">
+        <i class="bi bi-person-x"></i>
+    </button>
+</div>
+
+<form id="bulkForm" method="post">
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle bg-white">
+            <thead class="table-light">
+                <tr>
+                    <!-- select-all checkbox (no label in header) -->
+                    <th style="width:36px"><input id="selectAll" type="checkbox" aria-label="Select all" /></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>
+                        <!-- sort indicator is optional; sorting is server-side -->
+                        Last login
+                    </th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td><input class="row-chk" type="checkbox" name="selectedIds" value="@r.Id" aria-label="Select row" /></td>
+                        <td>@r.Name</td>
+                        <td class="text-break">@r.Email</td>
+                        <td>@(r.LastLoginUtc?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                        <td>
+                            @if (r.Status == UserStatus.Unverified)
+                            {
+                                <span class="badge text-bg-secondary">Unverified</span>
+                            }
+                            else if (r.Status == UserStatus.Active)
+                            {
+
+                                <span class="badge text-bg-success">Active</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge text-bg-danger">Blocked</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</form>
+@* <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> *@
+@section Scripts {
+    <script src="~/js/users.js"></script>
+}
