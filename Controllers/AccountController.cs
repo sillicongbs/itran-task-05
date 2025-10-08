@@ -18,20 +18,31 @@ namespace UserAuthManage.Controllers
         public IActionResult Register() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Register(string name, string email, string password)
+        public async Task<IActionResult> Register(UserRequestDto userRequest)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(userRequest.Email) || string.IsNullOrWhiteSpace(userRequest.Password))
             {
                 TempData["Danger"] = "Email and password are required.";
                 return View();
             }
-
+            var norm = userRequest.Email.Trim().ToLowerInvariant();   // same normalization you store
+            var exists = await db.Users
+                .AsNoTracking()
+                .AnyAsync(u => u.NormalizedEmail == norm);
+            if (exists)
+            {
+               
+                TempData["Danger"] = "This email is already registered.";
+                return View();
+            }
             var user = new User
             {
-                Name = string.IsNullOrWhiteSpace(name) ? "Anonymous" : name.Trim(),
-                Email = email.Trim(),
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                Name = string.IsNullOrWhiteSpace(userRequest.Name) ? "Anonymous" : userRequest.Name.Trim(),
+                Email = userRequest.Email.Trim(),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(userRequest.Password),
                 Status = UserStatus.Unverified,
+                Phone = userRequest.Phone.Trim(),
+                Address = userRequest.Address.Trim(),
                 EmailConfirmToken = Guid.NewGuid()
             };
 
@@ -77,17 +88,17 @@ namespace UserAuthManage.Controllers
         public IActionResult Login() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(LoginRequestDto loginRequest)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrWhiteSpace(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password))
             {
                 TempData["Danger"] = "Email and password are required.";
                 return View();
             }
 
-            var norm = email.Trim().ToLowerInvariant();
+            var norm = loginRequest.Email.Trim().ToLowerInvariant();
             var user = await db.Users.SingleOrDefaultAsync(u => u.NormalizedEmail == norm);
-            if (user is null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (user is null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.PasswordHash))
             {
                 TempData["Danger"] = "Invalid credentials.";
                 return View();

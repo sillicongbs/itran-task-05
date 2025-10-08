@@ -58,7 +58,9 @@
                 {
                     <tr>
                         <td><input class="row-chk" type="checkbox" name="selectedIds" value="@r.Id" aria-label="Select row" /></td>
-                        <td>@r.Name</td>
+                        <td>@r.Name
+                            <p class="card-text"><small class="text-muted">@r.Address</small></p>
+                        </td>
                         <td class="text-break">@r.Email</td>
                         <td>@(r.LastLoginUtc?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
                         <td>

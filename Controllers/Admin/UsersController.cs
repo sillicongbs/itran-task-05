@@ -16,13 +16,13 @@ namespace UserAuthManage.Controllers.Admin
             var rows = await db.Users
                 .AsNoTracking()
                 .OrderByDescending(u => u.LastLoginUtc) // THE THIRD REQUIREMENT: sorted by last login desc
-                .Select(u => new Row(u.Id, u.Name, u.Email, u.LastLoginUtc, u.Status))
+                .Select(u => new Row(u.Id, u.Name, u.Email, u.LastLoginUtc, u.Status,u.Phone,u.Address))
                 .ToListAsync();
 
             return View(rows);
         }
 
-        public sealed record Row(Guid Id, string Name, string Email, DateTime? LastLoginUtc, UserStatus Status);
+        public sealed record Row(Guid Id, string Name, string Email, DateTime? LastLoginUtc, UserStatus Status,string Phone, string Address);
 
         // Bulk Posts (same Index view posts to these via <form> handler):
         [HttpPost]

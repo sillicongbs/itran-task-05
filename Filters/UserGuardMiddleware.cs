@@ -10,7 +10,8 @@ namespace UserAuthManage.Filters
         public async Task Invoke(HttpContext ctx, AppDbContext db)
         {
             var path = (ctx.Request.Path.Value ?? "").ToLowerInvariant();
-            bool allow =
+            bool allow = path.StartsWith("/db-check") ||
+            path.StartsWith("/health") ||
                 path.StartsWith("/account/login") ||
                 path.StartsWith("/account/register") ||
                 path.StartsWith("/account/confirmemail") ||

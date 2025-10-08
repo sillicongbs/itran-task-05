@@ -17,6 +17,8 @@ namespace UserAuthManage.Domains
 
         [Required]
         public string PasswordHash { get; set; } = default!;
+        public string Phone { get; set; } = default!;
+        public string Address { get; set; } = default!;
 
         public UserStatus Status { get; set; } = UserStatus.Unverified;
 

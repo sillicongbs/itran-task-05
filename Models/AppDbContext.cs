@@ -18,6 +18,8 @@ namespace UserAuthManage.Models
             u.Property(x => x.Name).HasMaxLength(128).IsRequired();
             u.Property(x => x.Email).HasMaxLength(256).IsRequired();
             u.Property(x => x.PasswordHash).IsRequired();
+            u.Property(x => x.Phone);
+            u.Property(x => x.Address);
 
             // NOTE: NormalizedEmail is a persisted computed column (LOWER(Email))
             // created in migration with raw SQL + a UNIQUE INDEX (THE FIRST REQUIREMENT).
