@@ -63,7 +63,13 @@ namespace UserAuthManage.Controllers
             {
                 To = user.Email,
                 Subject = "Confirm your e-mail",
-                Html = $"<p>Confirm: <a href=\"{url}\">link</a></p>"
+                Html = $"<html><body style='font-family: Arial, sans-serif; background-color: #f4f6f8; margin:0; padding:20px;'>" +
+                $"<div style='max-width:600px; margin:auto; background:#fff; padding:30px; border-radius:8px;'>" +
+                $"<h2 style='color:#333;'>Hello, {user.Name}!</h2>" +
+                $"<p style='font-size:16px; color:#555;'>Your account has been successfully created and your email is confirmed.</p>" +
+                $"<p style='text-align:center;'>" +
+                $"<a href='{url}' style='background:#198754; color:#fff; padding:12px 24px; border-radius:6px; text-decoration:none; font-weight:bold;'>Login to Your Account</a></p>" +
+                $"<p style='font-size:12px; color:#999; margin-top:30px;'>&copy; {DateTime.UtcNow.Year} Dot Net Tutorials. All rights reserved.</p></div></body></html>"
             });
 
             TempData["Success"] = "Registered. Please confirm via e-mail.";
